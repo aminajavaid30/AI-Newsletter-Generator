@@ -1,0 +1,138 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        -20
+      ],
+      "id": "1a8d57d4-dcdf-467d-b7fa-c5c4a57a281a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BwCRSs7lYfQ4q0J2",
+          "mode": "list",
+          "cachedResultName": "Topic Finder Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -440,
+        -20
+      ],
+      "id": "8ece9555-3aff-40d7-8b3e-bf98eeab2f00",
+      "name": "Topic Finder Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ereU1rMX8LbNA5bN",
+          "mode": "list",
+          "cachedResultName": "Newsletter Generator Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        -20
+      ],
+      "id": "012edc87-89cb-483d-b83d-2fb706e4cb00",
+      "name": "Newsletter Generator Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6EibWzmA3uN8FpO2",
+          "mode": "list",
+          "cachedResultName": "News Search Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -180,
+        -20
+      ],
+      "id": "a0925b49-9a68-4929-b545-375052ecdc22",
+      "name": "News Search Agent",
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Topic Finder Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Finder Agent": {
+      "main": [
+        [
+          {
+            "node": "News Search Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News Search Agent": {
+      "main": [
+        [
+          {
+            "node": "Newsletter Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "d2227129dd1396c05bc0117db830c416932fb65aa89ef2bd5fd1d88c6744ad9c"
+  }
+}
