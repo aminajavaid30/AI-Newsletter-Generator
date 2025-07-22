@@ -1,0 +1,115 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Select news articles related to the following topics: {{ $json.output[\"topics\"] }} from the following given RSS news feeds: {{ $json.output[\"rssItems\"] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert AI researcher.\nYour job is to select AI news articles from the given RSS feed items based on the provided topics.\nYour responses should be informative, concise, and engaging.\n\nYou are provided with two inputs:\n\n1. \"topics\": an array of AI-related topic strings.\n2. \"rssItems\": an array of objects with fields: title, link, pubDate, source, summary, and content.\n\nYour task:\n- For each topic in \"topics\", locate matching articles ONLY within the \"rssItems\" array.\n- Do NOT invent or add any new articles.\n\nReturn output in strict JSON format."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1940,
+        -280
+      ],
+      "id": "eed06f48-38a9-4410-b3d9-6781f46601c5",
+      "name": "News Search Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "model": "moonshotai/kimi-k2-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        20
+      ],
+      "id": "2eb5f37c-e4c5-4682-9311-9d356b54c283",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "4guKspVZVhn62kDA",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"news\": {\n      \"type\": \"object\",\n      \"description\": \"News topics with an array of related articles\",\n      \"additionalProperties\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"title\": {\n              \"type\": \"string\",\n              \"description\": \"Title of the article selected from RSS feeds\"\n            },\n            \"link\": {\n              \"type\": \"string\",\n              \"format\": \"uri\",\n              \"description\": \"Link to the article selected from RSS feeds\"\n            },\n            \"summary\": {\n              \"type\": \"string\",\n              \"description\": \"Summary of the article selected from RSS feeds\"\n            },\n            \"content\": {\n              \"type\": \"string\",\n              \"description\": \"Content of the article selected from RSS feeds\"\n            }\n          },\n          \"required\": [\"title\", \"link\", \"summary\", \"content\"]\n        }\n      }\n    }\n  },\n  \"required\": [\"news\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1720,
+        20
+      ],
+      "id": "27adad47-abc9-4df6-b5c2-887d9a35108c",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2240,
+        -280
+      ],
+      "id": "a566b77c-9218-4387-82a0-6efb2fb596e7",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "connections": {
+    "News Search Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "News Search Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "News Search Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "News Search Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2227129dd1396c05bc0117db830c416932fb65aa89ef2bd5fd1d88c6744ad9c"
+  }
+}
