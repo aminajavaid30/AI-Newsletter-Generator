@@ -1,0 +1,305 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "model": "moonshotai/kimi-k2-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        700,
+        220
+      ],
+      "id": "78df9b6d-9ae2-4195-bb29-aa074ef289b0",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "4guKspVZVhn62kDA",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.technologyreview.com/feed/",
+        "options": {
+          "ignoreSSL": false
+        }
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        -180
+      ],
+      "id": "0b821a50-7ba3-4741-878d-dd445e1dc34a",
+      "name": "MIT Technology Review"
+    },
+    {
+      "parameters": {
+        "url": "https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml",
+        "options": {
+          "ignoreSSL": false
+        }
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        -20
+      ],
+      "id": "15d41a44-2e78-44a7-b53d-b619516bfe53",
+      "name": "Science Daily",
+      "retryOnFail": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://venturebeat.com/category/ai/feed/",
+        "options": {
+          "ignoreSSL": false
+        }
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        140
+      ],
+      "id": "a96cbc55-a252-4770-8c31-a30aace5f4f7",
+      "name": "Venture Beat"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"topics\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\",\n        \"description\": \"Top trending AI news topics\"\n      }\n    },\n    \"rssItems\": {\n      \"type\": \"array\",\n      \"description\": \"List of merged RSS feed items from all sources\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"title\": { \"type\": \"string\" },\n          \"link\": { \"type\": \"string\", \"format\": \"uri\" },\n          \"pubDate\": { \"type\": \"string\", \"description\": \"Publication date of the article\" },\n          \"source\": { \"type\": \"string\", \"description\": \"RSS feed source name\" },\n          \"summary\": { \"type\": \"string\", \"description\": \"Summary of RSS feed item\" },\n          \"content\": { \"type\": \"string\", \"description\": \"Content of RSS feed item\" }\n        },\n        \"required\": [\"title\", \"link\", \"pubDate\", \"source\", \"summary\", \"content\"]\n      }\n    }\n  },\n  \"required\": [\"topics\", \"rssItems\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        900,
+        220
+      ],
+      "id": "2980a254-0c17-4a82-bc0c-7d58ab1f57ed",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Suggest top 5 trending AI topics from the given RSS feeds:\n{{ $node[\"Merge\"].data.values() }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert AI research assistant.\nYour job is to find trending AI news topics from the given RSS feeds.\nYour style or tone should be informative, concise, and engaging. \nYour task is to search for the latest trending topics in AI news from the given RSS feeds and provide a list of 5 topics.\nGiven the titles in the provided RSS feeds, suggest 5 topics based on maximum number of mentions in the titles.\nEach topic should be a brief phrase that captures the essence of the trend.\nProvide 5 unique topics.\nEach topic should be no more than 10 words.\nDo NOT make up any topics from your own knowledge.\nReturn the following as response in JSON format:\n- list of topics\n- parsed RSS feed items used to find topics "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -20
+      ],
+      "id": "6a21fa6d-ef0c-449c-a798-4b64cfbd331a",
+      "name": "Topic Finder Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        -20
+      ],
+      "id": "7dc660ec-081c-4b1f-89ba-533e143fd4d3",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        480,
+        -20
+      ],
+      "id": "a7ec31d1-a2a3-4585-bdb3-2d43054cd547",
+      "name": "Merge",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        100,
+        -180
+      ],
+      "id": "acffb863-82b2-4e0f-8b2a-469379676606",
+      "name": "MIT Limit"
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        100,
+        -20
+      ],
+      "id": "680dd441-f674-4d9b-b1e0-035fd5f00688",
+      "name": "SD Limit"
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        100,
+        140
+      ],
+      "id": "0cd7c236-b64d-47e5-ac2b-a89c0ab5ef4d",
+      "name": "VB Limit"
+    }
+  ],
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Topic Finder Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MIT Technology Review": {
+      "main": [
+        [
+          {
+            "node": "MIT Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Science Daily": {
+      "main": [
+        [
+          {
+            "node": "SD Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Venture Beat": {
+      "main": [
+        [
+          {
+            "node": "VB Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Topic Finder Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Finder Agent": {
+      "main": [
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "MIT Technology Review",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Science Daily",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Venture Beat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Topic Finder Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MIT Limit": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SD Limit": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "VB Limit": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2227129dd1396c05bc0117db830c416932fb65aa89ef2bd5fd1d88c6744ad9c"
+  }
+}
