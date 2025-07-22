@@ -1,0 +1,168 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BwCRSs7lYfQ4q0J2",
+          "mode": "list",
+          "cachedResultName": "Topic Finder Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -440,
+        -20
+      ],
+      "id": "7eb05f95-52bb-446e-a41c-511fbebe5d0c",
+      "name": "Topic Finder Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ereU1rMX8LbNA5bN",
+          "mode": "list",
+          "cachedResultName": "Newsletter Generator Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        -20
+      ],
+      "id": "903bf72c-a86e-4116-bf86-f4c36ecc9bd8",
+      "name": "Newsletter Generator Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6EibWzmA3uN8FpO2",
+          "mode": "list",
+          "cachedResultName": "News Search Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -180,
+        -20
+      ],
+      "id": "5c819924-25ec-47c0-b5a2-50a1652a2e8a",
+      "name": "News Search Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "path": "f7c6e161-cd75-4ac5-b2fa-4ce5c2a5f182",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -660,
+        -20
+      ],
+      "id": "55eb18e7-8314-4bd3-8fe8-faf63ab8cc05",
+      "name": "Webhook",
+      "webhookId": "f7c6e161-cd75-4ac5-b2fa-4ce5c2a5f182"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        -20
+      ],
+      "id": "8c27f6d0-15a0-4357-8083-73584969414d",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": true
+    }
+  ],
+  "connections": {
+    "Topic Finder Agent": {
+      "main": [
+        [
+          {
+            "node": "News Search Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Newsletter Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "News Search Agent": {
+      "main": [
+        [
+          {
+            "node": "Newsletter Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Topic Finder Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "d2227129dd1396c05bc0117db830c416932fb65aa89ef2bd5fd1d88c6744ad9c"
+  }
+}
