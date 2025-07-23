@@ -1,4 +1,5 @@
 {
+  "name": "Topic Finder Agent",
   "nodes": [
     {
       "parameters": {
@@ -297,9 +298,13 @@
       ]
     }
   },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
   "pinData": {},
+  "triggerCount": 0,
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "d2227129dd1396c05bc0117db830c416932fb65aa89ef2bd5fd1d88c6744ad9c"
+    "templateCredsSetupCompleted": true
   }
 }
